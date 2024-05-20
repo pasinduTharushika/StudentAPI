@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.DataModels;
 
@@ -11,9 +12,11 @@ using api.DataModels;
 namespace api.Migrations
 {
     [DbContext(typeof(StudentManagementContext))]
-    partial class StudentManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20240520184253_addfullname")]
+    partial class addfullname
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,29 @@ namespace api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("api.DataModels.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PhysicalAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostalAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId")
+                        .IsUnique();
+
+                    b.ToTable("Address");
+                });
 
             modelBuilder.Entity("api.DataModels.Course", b =>
                 {
@@ -48,14 +74,25 @@ namespace api.Migrations
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("api.DataModels.Student", b =>
+            modelBuilder.Entity("api.DataModels.Gender", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Address")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Gender");
+                });
+
+            modelBuilder.Entity("api.DataModels.Student", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CourseId")
                         .HasColumnType("uniqueidentifier");
@@ -69,18 +106,31 @@ namespace api.Migrations
                     b.Property<string>("FullNmae")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("GenderId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("Mobile")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("ProfileImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
+                    b.HasIndex("GenderId");
+
                     b.ToTable("Student");
+                });
+
+            modelBuilder.Entity("api.DataModels.Address", b =>
+                {
+                    b.HasOne("api.DataModels.Student", null)
+                        .WithOne("Address")
+                        .HasForeignKey("api.DataModels.Address", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("api.DataModels.Student", b =>
@@ -91,12 +141,25 @@ namespace api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("api.DataModels.Gender", "Gender")
+                        .WithMany()
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Course");
+
+                    b.Navigation("Gender");
                 });
 
             modelBuilder.Entity("api.DataModels.Course", b =>
                 {
                     b.Navigation("Students");
+                });
+
+            modelBuilder.Entity("api.DataModels.Student", b =>
+                {
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }

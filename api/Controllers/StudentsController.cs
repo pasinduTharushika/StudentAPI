@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using api.DomainModels;
+using api.DataModels;
 using api.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -31,14 +31,38 @@ namespace api.Controllers
 
             return Ok(_mapper.Map<List<Student>>(students));
         }
-        //[HttpGet]
+        [HttpGet("{studentId}")]
         //[Route("[controller]")]
-        //public async Task<IActionResult> GetStudentsByIdAsync(int studentId)
-        //{
-        //    var students = await _studentRepository.GetStudentsByIdAsync(studentId);
+        public async Task<IActionResult> GetStudentsByIdAsync(Guid studentId)
+        {
+            var students = await _studentRepository.GetStudentsByIdAsync(studentId);
 
-        //    return Ok(_mapper.Map<List<Student>>(students));
-        //}
+            return Ok(_mapper.Map<Student>(students));
+        }
+        [HttpPost]
+        [Route("[controller]")]
+        public async Task<IActionResult> AddStudentsAsync([FromBody] Student student)
+        {
+            var students = await _studentRepository.AddStudentsAsync(student);
+
+            return Ok(_mapper.Map<List<Student>>(students));
+        }
+
+        [HttpPut("{studentId}")]        
+        public async Task<IActionResult> UpdateStudentsAsync(Guid studentId)
+        {
+            var students = await _studentRepository.UpdateStudentsAsync(studentId);
+
+            return Ok(_mapper.Map<List<Student>>(students));
+        }
+        [HttpDelete("{studentId}")]
+        //[Route("[controller]")]
+        public async Task<IActionResult> DeleteStudentsAsync(Guid studentId)
+        {
+            var students = await _studentRepository.DeleteStudentsAsync(studentId);
+
+            return Ok(_mapper.Map<List<Student>>(students));
+        }
     }
 }
 

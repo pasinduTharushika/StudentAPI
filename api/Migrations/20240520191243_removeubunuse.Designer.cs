@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.DataModels;
 
@@ -11,9 +12,11 @@ using api.DataModels;
 namespace api.Migrations
 {
     [DbContext(typeof(StudentManagementContext))]
-    partial class StudentManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20240520191243_removeubunuse")]
+    partial class removeubunuse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace api.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CourseId")
+                    b.Property<Guid?>("CourseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateOfBirth")
@@ -73,6 +76,9 @@ namespace api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("GenderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<long>("Mobile")
                         .HasColumnType("bigint");
 
@@ -87,9 +93,7 @@ namespace api.Migrations
                 {
                     b.HasOne("api.DataModels.Course", "Course")
                         .WithMany("Students")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CourseId");
 
                     b.Navigation("Course");
                 });

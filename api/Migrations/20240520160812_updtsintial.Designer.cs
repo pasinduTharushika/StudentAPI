@@ -12,8 +12,8 @@ using api.DataModels;
 namespace api.Migrations
 {
     [DbContext(typeof(StudentManagementContext))]
-    [Migration("20240520104112_course")]
-    partial class course
+    [Migration("20240520160812_updtsintial")]
+    partial class updtsintial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,11 +50,9 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.DataModels.Course", b =>
                 {
-                    b.Property<int>("CourseId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CourseId"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CourseFee")
                         .IsRequired()
@@ -71,7 +69,7 @@ namespace api.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("CourseId");
+                    b.HasKey("Id");
 
                     b.ToTable("Courses");
                 });
@@ -96,8 +94,8 @@ namespace api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -140,15 +138,19 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.DataModels.Student", b =>
                 {
-                    b.HasOne("api.DataModels.Course", null)
+                    b.HasOne("api.DataModels.Course", "Course")
                         .WithMany("Students")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("api.DataModels.Gender", "Gender")
                         .WithMany()
                         .HasForeignKey("GenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Course");
 
                     b.Navigation("Gender");
                 });

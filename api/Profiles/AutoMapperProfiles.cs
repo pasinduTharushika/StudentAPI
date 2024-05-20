@@ -8,8 +8,7 @@ namespace api.Profiles
 		public AutoMapperProfiles()
 		{
 			CreateMap<DataModels.Student, DomainModels.Student>().ReverseMap();
-            CreateMap<DataModels.Gender, DomainModels.Gender>().ReverseMap();
-            CreateMap<DataModels.Address, DomainModels.Address>().ReverseMap();
+            
         }
 	}
 }
